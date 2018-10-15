@@ -39,7 +39,7 @@ raiders = [
 
 slots = ['slot1', 'slot2', 'slot3', 'slot4', 'slot5', 'slot6', 'slot7', 'slot8', 'slot9', 'slot10', 'slot11', 'slot12', 'slot13', 'slot14', 'slot15', 'slot16', 'slot17', 'slot18', 'slot19', 'slot20']
 tankslots = ['slot1', 'slot2']
-healslots = ['slot20', 'slot19', 'slot18', 'slot17', 'slot16']
+healslots = ['slot16', 'slot17', 'slot18', 'slot19', 'slot20']
 # Constraints for group
 # Exactly two tanks
 def twoTanks(*args):
@@ -89,8 +89,8 @@ def raidBuffs(*args):
 problem = Problem()
 for s in slots:
     problem.addVariable(s, raiders)
-problem.addConstraint(FunctionConstraint(twoTanks), slots)
-problem.addConstraint(FunctionConstraint(fiveHeals), slots)
+problem.addConstraint(FunctionConstraint(twoTanks), tankslots)
+problem.addConstraint(FunctionConstraint(fiveHeals), healslots)
 problem.addConstraint(FunctionConstraint(raidBuffs), slots)
 problem.addConstraint(AllDifferentConstraint())
 solutions = problem.getSolutions()
