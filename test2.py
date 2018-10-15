@@ -81,13 +81,17 @@ def debugContraint(*args):
             numMonks += 1
         if s.c == 'demonhunter':
             numDemonHunters += 1
+
     print('Tanks: %d, Heals: %d, assignment: %s' % (numTanks, numHeals, args))
     return True
 
 def reduceConstraint(*args):
-    for i, el in enumerate(args[1:]):
-        if key(el) < key(args[i]):
+    previous = ""
+    for s in args:
+        if previous > s.name:
             return False
+        else:
+            previous = s.name
     return True
 
 # Problem Calculation
@@ -98,10 +102,9 @@ healers = [r for r in raiders if r.role == 'heal']
 problem.addVariables(['slot1', 'slot2'], tanks)
 problem.addVariables(['slot%d' % i for i in range(3, 16)], dps)
 problem.addVariables(['slot16', 'slot17', 'slot18', 'slot19', 'slot20'], healers)
-
 problem.addConstraint(debugContraint, slots)
 problem.addConstraint(AllDifferentConstraint())
-problem.addConstraint(FunctionConstraint(reduceConstraint), tanks)
+#problem.addConstraint(FunctionConstraint(reduceConstraint), tanks)
 problem.addConstraint(FunctionConstraint(reduceConstraint), healers)
 problem.addConstraint(FunctionConstraint(reduceConstraint), dps)
 problem.addConstraint(FunctionConstraint(raidBuffs), slots)
