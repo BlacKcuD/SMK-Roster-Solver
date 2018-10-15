@@ -65,6 +65,7 @@ def fiveHeals(*args):
             numHeals += 1
     return numHeals == 5
 
+# Ensure all raid buffs and debuffs are present
 def raidBuffs(*args):
     numPriests = 0
     numMages = 0
@@ -84,11 +85,12 @@ def raidBuffs(*args):
             numDemonHunters += 1
     return numPriests >= 1 and numMages >= 1 and numWarriors >= 1 and numMonks >= 1 and numDemonHunters >= 1
 
+# Problem Calculation
 problem = Problem()
 for s in slots:
     problem.addVariable(s, raiders)
-problem.addConstraint(FunctionConstraint(twoTanks), tankslots)
-problem.addConstraint(FunctionConstraint(fiveHeals), healslots)
+problem.addConstraint(FunctionConstraint(twoTanks), slots)
+problem.addConstraint(FunctionConstraint(fiveHeals), slots)
 problem.addConstraint(FunctionConstraint(raidBuffs), slots)
 problem.addConstraint(AllDifferentConstraint())
 solutions = problem.getSolutions()
