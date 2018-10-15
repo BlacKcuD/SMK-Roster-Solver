@@ -84,10 +84,21 @@ def debugContraint(*args):
     print('Tanks: %d, Heals: %d, assignment: %s' % (numTanks, numHeals, args))
     return True
 
+# alphabet salat arp version
 def reduceConstraint(*args):
     for i, el in enumerate(args[1:]):
         if key(el) < key(args[i]):
             return False
+    return True
+
+# alphabet salat frosch version
+def ascendingOrder(*args):
+    last_slot_name = next(iter(args)).name
+
+    for slot in args:
+        if slot.name < last_slot_name:
+            return False
+        last_slot_name = slot.name
     return True
 
 # Problem Calculation
@@ -95,16 +106,24 @@ problem = Problem()
 tanks = [r for r in raiders if r.role == 'tank']
 dps = [r for r in raiders if r.role == 'dps']
 healers = [r for r in raiders if r.role == 'heal']
+
+numTanks = 2
+numHeals = 5
+numDps = len(slots) - numTanks - numHeals
+
+tankSlots = ['slot%d' % i for i in range(1, numTanks+1)]
+dpsSlots = ['slot%d' % i for i in range(numTanks+1, numDps+numTanks+1)]
+healSlots = ['slot%d' % i for i in range(numDps+numTanks+1, len(slots)+1)]
+
 problem.addVariables(['slot1', 'slot2'], tanks)
 problem.addVariables(['slot%d' % i for i in range(3, 16)], dps)
 problem.addVariables(['slot16', 'slot17', 'slot18', 'slot19', 'slot20'], healers)
 
 problem.addConstraint(debugContraint, slots)
 problem.addConstraint(AllDifferentConstraint())
-problem.addConstraint(FunctionConstraint(reduceConstraint), tanks)
-problem.addConstraint(FunctionConstraint(reduceConstraint), healers)
-problem.addConstraint(FunctionConstraint(reduceConstraint), dps)
-problem.addConstraint(FunctionConstraint(raidBuffs), slots)
+problem.addConstraint(ascendingOrder, tankSlots)
+problem.addConstraint(ascendingOrder, dpsSlots)
+problem.addConstraint(ascendingOrder, healSlots)
 solutions_iter = problem.getSolutionIter()
 first_solution = list(solutions_iter)[0]
 print(first_solution)
